@@ -1,0 +1,20 @@
+{
+	"details": [
+		{
+			"file": "User/ch32h417_it.h",
+			"encoding": "utf8"
+		},
+		{
+			"file": "User/main.c",
+			"encoding": "utf8"
+		},
+		{
+			"file": "platform/lzport/include/lzport/gpio.h",
+			"encoding": "utf8"
+		},
+		{
+			"file": "platform/lzport/include/lzport/serial.h",
+			"encoding": "utf8"
+		}
+	]
+}

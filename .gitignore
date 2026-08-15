@@ -1,0 +1,20 @@
+# Build outputs
+/build/
+/tmp/
+/V3F/obj/
+/V5F/obj/
+
+# MounRiver Studio local workspace state
+/.mrs/
+/V3F/.mrs/*
+!/V3F/.mrs/preferredEncoding.json
+/V5F/.mrs/*
+!/V5F/.mrs/preferredEncoding.json
+
+# Editor and OS files
+.vscode/
+.idea/
+*.user
+Thumbs.db
+.DS_Store
+
