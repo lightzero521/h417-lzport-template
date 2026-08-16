@@ -4,8 +4,7 @@
 #include "ch32h417_rcc.h"
 
 #define I2C_COUNT 4U
-#define I2C_ERROR_FLAGS (I2C_FLAG_BERR | I2C_FLAG_ARLO | \
-                         I2C_FLAG_AF | I2C_FLAG_OVR)
+#define I2C_ERROR_FLAGS (I2C_FLAG_BERR | I2C_FLAG_ARLO | I2C_FLAG_AF | I2C_FLAG_OVR)
 #define I2C_ERROR_MASK  (I2C_ERROR_FLAGS & 0xFFFFU)
 
 typedef struct
@@ -31,8 +30,7 @@ static int pin_valid(const lzport_i2c_pin *pin)
            ((uint32_t)pin->af < LZPORT_GPIO_AF_COUNT);
 }
 
-static lzport_status wait_flag(I2C_TypeDef *reg, uint32_t flag,
-                               FlagStatus state, uint32_t timeout)
+static lzport_status wait_flag(I2C_TypeDef *reg, uint32_t flag, FlagStatus state, uint32_t timeout)
 {
     while (timeout-- != 0U) {
         if ((reg->STAR1 & I2C_ERROR_MASK) != 0U) {
@@ -69,8 +67,7 @@ static void transfer_abort(I2C_TypeDef *reg)
     receive_restore(reg);
 }
 
-static lzport_status receive_data(I2C_TypeDef *reg, uint8_t *buf,
-                                  uint32_t len, uint32_t timeout_cycles)
+static lzport_status receive_data(I2C_TypeDef *reg, uint8_t *buf, uint32_t len, uint32_t timeout_cycles)
 {
     uint32_t remaining = len;
     lzport_status status;

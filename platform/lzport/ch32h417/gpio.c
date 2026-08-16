@@ -15,7 +15,6 @@ typedef struct
     void *user;
     lzport_gpio_port port;
     uint8_t attached;
-    uint8_t enabled;
 } gpio_irq_state;
 
 static gpio_irq_state g_irq[LZPORT_GPIO_PIN_COUNT];
@@ -219,32 +218,10 @@ lzport_status lzport_gpio_irq_attach(lzport_gpio_port port,
     g_irq[pin].user = user;
     g_irq[pin].port = port;
     g_irq[pin].attached = 1U;
-    g_irq[pin].enabled = 1U;
     irq = ((uint32_t)pin < 8U) ? EXTI7_0_IRQn : EXTI15_8_IRQn;
     NVIC_ClearPendingIRQ(irq);
     NVIC_SetPriority(irq, GPIO_IRQ_PRIORITY);
     NVIC_EnableIRQ(irq);
-    return LZPORT_OK;
-}
-
-lzport_status lzport_gpio_irq_enable(lzport_gpio_port port,
-                                     lzport_gpio_pin pin, int enable)
-{
-    uint32_t line;
-
-    if (!gpio_pin_valid(port, pin) || (g_irq[pin].attached == 0U) ||
-        (g_irq[pin].port != port)) {
-        return LZPORT_EINVAL;
-    }
-    line = 1UL << (uint32_t)pin;
-    if (enable != 0) {
-        EXTI_ClearITPendingBit(line);
-        EXTI->INTENR |= line;
-        g_irq[pin].enabled = 1U;
-    } else {
-        EXTI->INTENR &= ~line;
-        g_irq[pin].enabled = 0U;
-    }
     return LZPORT_OK;
 }
 
@@ -266,7 +243,6 @@ lzport_status lzport_gpio_irq_detach(lzport_gpio_port port,
     g_irq[pin].callback = 0;
     g_irq[pin].user = 0;
     g_irq[pin].attached = 0U;
-    g_irq[pin].enabled = 0U;
     return LZPORT_OK;
 }
 
@@ -283,7 +259,7 @@ static void gpio_irq_dispatch(uint8_t first, uint8_t last)
             continue;
         }
         EXTI_ClearITPendingBit(line);
-        if ((g_irq[pin].attached == 0U) || (g_irq[pin].enabled == 0U)) {
+        if (g_irq[pin].attached == 0U) {
             continue;
         }
         callback = g_irq[pin].callback;

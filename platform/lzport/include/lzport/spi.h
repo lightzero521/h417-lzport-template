@@ -38,8 +38,7 @@ typedef struct
 lzport_status lzport_spi_init(uint8_t inst, const lzport_spi_config *cfg);
 lzport_status lzport_spi_deinit(uint8_t inst);
 /* tx=NULL sends 0xFF; rx=NULL discards received data. */
-lzport_status lzport_spi_xfer(uint8_t inst, const uint8_t *tx, uint8_t *rx,
-                              uint32_t len);
+lzport_status lzport_spi_xfer(uint8_t inst, const uint8_t *tx, uint8_t *rx, uint32_t len);
 
 #ifdef __cplusplus
 }

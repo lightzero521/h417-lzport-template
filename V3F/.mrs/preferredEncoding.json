@@ -15,6 +15,10 @@
 		{
 			"file": "platform/lzport/include/lzport/serial.h",
 			"encoding": "utf8"
+		},
+		{
+			"file": "platform/lzport/ch32h417/rtc.c",
+			"encoding": "utf8"
 		}
 	]
 }

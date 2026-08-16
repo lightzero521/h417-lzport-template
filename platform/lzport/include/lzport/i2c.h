@@ -26,10 +26,8 @@ typedef struct
 /* inst 0..3 select I2C1..I2C4. External pull-ups are required. */
 lzport_status lzport_i2c_init(uint8_t inst, const lzport_i2c_config *cfg);
 lzport_status lzport_i2c_deinit(uint8_t inst);
-lzport_status lzport_i2c_write(uint8_t inst, uint8_t addr7, const uint8_t *buf,
-                               uint32_t len, uint32_t timeout_cycles);
-lzport_status lzport_i2c_read(uint8_t inst, uint8_t addr7, uint8_t *buf,
-                              uint32_t len, uint32_t timeout_cycles);
+lzport_status lzport_i2c_write(uint8_t inst, uint8_t addr7, const uint8_t *buf, uint32_t len, uint32_t timeout_cycles);
+lzport_status lzport_i2c_read(uint8_t inst, uint8_t addr7, uint8_t *buf, uint32_t len, uint32_t timeout_cycles);
 /* Write followed by a repeated START and read, with no STOP in between. */
 lzport_status lzport_i2c_write_read(uint8_t inst, uint8_t addr7,
                                     const uint8_t *tx, uint32_t tx_len,

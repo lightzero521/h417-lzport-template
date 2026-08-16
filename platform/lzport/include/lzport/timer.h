@@ -34,9 +34,7 @@ typedef struct
     void *user;
 } lzport_timer_config;
 
-/* Logical timers map to a platform's pinless basic timers. */
-lzport_status lzport_timer_init(lzport_timer timer,
-                                const lzport_timer_config *cfg);
+lzport_status lzport_timer_init(lzport_timer timer, const lzport_timer_config *cfg);
 lzport_status lzport_timer_deinit(lzport_timer timer);
 lzport_status lzport_timer_start(lzport_timer timer);
 lzport_status lzport_timer_stop(lzport_timer timer);

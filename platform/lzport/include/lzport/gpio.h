@@ -100,7 +100,6 @@ typedef enum
     LZPORT_GPIO_IRQ_EDGE_COUNT
 } lzport_gpio_irq_edge;
 
-/* Callback runs in interrupt context. */
 typedef void (*lzport_gpio_irq_cb)(lzport_gpio_port port,
                                    lzport_gpio_pin pin, void *user);
 
@@ -109,20 +108,13 @@ void lzport_gpio_mode_analog(lzport_gpio_port port, lzport_gpio_pin pin);
 void lzport_gpio_mode_output(lzport_gpio_port port, lzport_gpio_pin pin, lzport_gpio_speed speed, lzport_gpio_otype otype);
 void lzport_gpio_mode_af_input(lzport_gpio_port port, lzport_gpio_pin pin, lzport_gpio_af af, lzport_gpio_pull pull);
 void lzport_gpio_mode_af_output(lzport_gpio_port port, lzport_gpio_pin pin, lzport_gpio_af af, lzport_gpio_speed speed, lzport_gpio_otype otype);
-
 void lzport_gpio_set(lzport_gpio_port port, lzport_gpio_pin pin);
 void lzport_gpio_reset(lzport_gpio_port port, lzport_gpio_pin pin);
 void lzport_gpio_toggle(lzport_gpio_port port, lzport_gpio_pin pin);
 void lzport_gpio_write(lzport_gpio_port port, lzport_gpio_pin pin, lzport_gpio_level level);
 lzport_gpio_level lzport_gpio_read(lzport_gpio_port port, lzport_gpio_pin pin);
-lzport_status lzport_gpio_irq_attach(lzport_gpio_port port,
-                                     lzport_gpio_pin pin,
-                                     lzport_gpio_irq_edge edge,
-                                     lzport_gpio_irq_cb callback, void *user);
-lzport_status lzport_gpio_irq_enable(lzport_gpio_port port,
-                                     lzport_gpio_pin pin, int enable);
-lzport_status lzport_gpio_irq_detach(lzport_gpio_port port,
-                                     lzport_gpio_pin pin);
+lzport_status lzport_gpio_irq_attach(lzport_gpio_port port, lzport_gpio_pin pin, lzport_gpio_irq_edge edge, lzport_gpio_irq_cb callback, void *user);
+lzport_status lzport_gpio_irq_detach(lzport_gpio_port port, lzport_gpio_pin pin);
 
 #ifdef __cplusplus
 }

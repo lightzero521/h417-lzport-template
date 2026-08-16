@@ -3,14 +3,25 @@
 #include "ch32h417_pwr.h"
 #include "ch32h417_rcc.h"
 #include "ch32h417_rtc.h"
-#include "debug.h"
 
 #define RTC_LSE_TIMEOUT_COUNT 250U
 #define RTC_LSI_TIMEOUT_COUNT 250U
 #define RTC_SECONDS_DAY       86400U
+#define RTC_DELAY_LOOPS_MS    25000U /* 100 MHz, about 4 cycles per loop. */
 
 static uint8_t g_initialized;
 static uint32_t g_prescaler;
+
+static void delay_ms(uint32_t ms)
+{
+    while (ms-- != 0U) {
+        uint32_t loops = RTC_DELAY_LOOPS_MS;
+
+        while (loops-- != 0U) {
+            __NOP();
+        }
+    }
+}
 
 static int is_leap(uint16_t year)
 {
@@ -65,7 +76,7 @@ static void seconds_to_datetime(uint32_t seconds, lzport_rtc_datetime *out)
     uint8_t month = 1U;
     uint16_t days_this_year;
 
-    for (;;) {
+    while (1) {
         days_this_year = is_leap(year) ? 366U : 365U;
         if (days < days_this_year) {
             break;
@@ -109,25 +120,20 @@ lzport_status lzport_rtc_init(void)
     source = RCC->BDCTLR & RCC_RTCSEL;
     if (lzport_rtc_is_configured()) {
         if (source == RCC_RTCSEL_LSE) {
-            while ((RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET) &&
-                   (timeout++ < RTC_LSE_TIMEOUT_COUNT)) {
-                Delay_Ms(10U);
+            while ((RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET) && (timeout++ < RTC_LSE_TIMEOUT_COUNT)) {
+                delay_ms(10U);
             }
         } else if (source == RCC_RTCSEL_LSI) {
             RCC_LSICmd(ENABLE);
-            while ((RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET) &&
-                   (timeout++ < RTC_LSI_TIMEOUT_COUNT)) {
-                Delay_Ms(10U);
+            while ((RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET) && (timeout++ < RTC_LSI_TIMEOUT_COUNT)) {
+                delay_ms(10U);
             }
         }
-        if (((source == RCC_RTCSEL_LSE) &&
-             (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == SET)) ||
-            ((source == RCC_RTCSEL_LSI) &&
-             (RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == SET))) {
+        if (((source == RCC_RTCSEL_LSE) && (RCC_GetFlagStatus(RCC_FLAG_LSERDY) == SET)) ||
+            ((source == RCC_RTCSEL_LSI) && (RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == SET))) {
             RTC_WaitForSynchro();
             RTC_WaitForLastTask();
-            g_prescaler = ((uint32_t)(RTC->PSCRH & 0x0FU) << 16) |
-                          RTC->PSCRL;
+            g_prescaler = ((uint32_t)(RTC->PSCRH & 0x0FU) << 16) | RTC->PSCRL;
             g_initialized = 1U;
             return LZPORT_OK;
         }
@@ -138,9 +144,8 @@ lzport_status lzport_rtc_init(void)
     if (source != RCC_RTCSEL_LSE) {
         timeout = 0U;
         RCC_LSEConfig(RCC_LSE_ON);
-        while ((RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET) &&
-               (timeout++ < RTC_LSE_TIMEOUT_COUNT)) {
-            Delay_Ms(10U);
+        while ((RCC_GetFlagStatus(RCC_FLAG_LSERDY) == RESET) && (timeout++ < RTC_LSE_TIMEOUT_COUNT)) {
+            delay_ms(10U);
         }
     }
 
@@ -151,9 +156,8 @@ lzport_status lzport_rtc_init(void)
         RCC_LSEConfig(RCC_LSE_OFF);
         RCC_LSICmd(ENABLE);
         timeout = 0U;
-        while ((RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET) &&
-               (timeout++ < RTC_LSI_TIMEOUT_COUNT)) {
-            Delay_Ms(10U);
+        while ((RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET) && (timeout++ < RTC_LSI_TIMEOUT_COUNT)) {
+            delay_ms(10U);
         }
         if (RCC_GetFlagStatus(RCC_FLAG_LSIRDY) == RESET) {
             return LZPORT_ETIMEOUT;
